@@ -1,11 +1,14 @@
 const express = require("express");
 const dotenv = require("dotenv");
-
-const hospitals = require("./routes/hospitals");
+const connectDB = require("./config/db");
 
 dotenv.config({ path: "./config/config.env" });
 
+connectDB();
+
+const hospitals = require("./routes/hospitals");
 const app = express();
+app.use(express.json());
 
 app.use("/api/v1/hospitals", hospitals);
 
@@ -18,4 +21,10 @@ app.listen(PORT, () => {
     " mode on port ",
     PORT
   );
+});
+
+process.on("unhandledRejection", (err, promise) => {
+  console.log(`Error: ${err.message}`);
+  // Close server & exit process
+  server.close(() => process.exit(1));
 });
